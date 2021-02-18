@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  InputS3Bucket:
+    Description: 'Please input your existing S3 Bucket with Terraform state files to merge:'
+    Type: String
+    MinLength: '3'
+    ConstraintDescription: Please input your existing S3 Bucket with Terraform state files to merge
+
+Resources:
+
+  OutputBucket:
+    Type : "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Join
+        - "-"
+        - - !Ref 'InputS3Bucket'
+          - "merged"
+          - !Select
+            - 0
+            - !Split
+              - "-"
+              - !Select
+                - 2
+                - !Split
+                  - "/"
+                  - !Ref "AWS::StackId"
+
+  MergerLambdaPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+
+          - Effect: Allow
+            Action:
+              - 'logs:*'
+            Resource:
+              - 'arn:aws:logs:*:*:*'
+
+          - Effect: Allow
+            Action:
+              - 's3:Get*'
+              - 's3:List*'
+            Resource:
+              - !Join [':', ['arn:aws:s3::', !Ref 'InputS3Bucket']]
+              - "Fn::Join": [
+                "", [
+                !Join [':', ['arn:aws:s3::', !Ref 'InputS3Bucket']],
+                "/*"
+              ]
+              ]
+
+          - Effect: Allow
+            Action: 's3:*'
+            Resource:
+              - "Fn::GetAtt":  ["OutputBucket", "Arn" ]
+              - "Fn::Join": [
+                "", [
+              "Fn::GetAtt":  ["OutputBucket", "Arn" ],
+              "/*"
+              ]
+              ]
+
+  MergerLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Sub: terraform-merger
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - !Ref MergerLambdaPolicy
+
+  MergerLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: terraform-merger
+      Description: Merging terraform state files to a single file
+      Runtime: python3.7
+      Code:
+        S3Bucket: 'infralight-templates-public'
+        S3Key: 'merger/merger.zip'
+      Handler: index.lambda_handler
+      MemorySize: 128
+      Timeout: 30
+      Environment:
+        Variables:
+          INPUT_BUCKET: !Ref InputS3Bucket
+          OUTPUT_BUCKET: !Ref OutputBucket
+      Role:
+        "Fn::GetAtt":  ["MergerLambdaRole", "Arn" ]
+
+
+  MergerScheduledRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: "MergerScheduleRule"
+      ScheduleExpression: "rate(1 minute)"
+      State: "ENABLED"
+      Targets:
+        -
+          Arn:
+            Fn::GetAtt:
+              - "MergerLambdaFunction"
+              - "Arn"
+          Id: "TargetFunctionV1"
+
+  MergerPermissionForEventsToInvokeLambda:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: "MergerLambdaFunction"
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn:
+        Fn::GetAtt:
+          - "MergerScheduledRule"
+          - "Arn"
+
+Outputs:
+
+
+  OutputS3BucketName:
+    Description: The name of the merged output s3 bucket
+    Value: !GetAtt OutputBucket.Arn
+
+  MergerLambdaArn:
+    Description: Merger lambda ARN
+    Value: !GetAtt MergerLambdaFunction.Arn

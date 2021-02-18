@@ -47,10 +47,3 @@ def lambda_handler(event, context):
     s3_client.put_object(OUTPUT_BUCKET, INFRALIGHT_OUTPUT_STATE_PATH, json.dumps(merged_state_file))
 
     return "Done"
-
-
-if __name__ == '__main__':  # TODO - remove before commit
-    os.environ["INPUT_BUCKET"] = "roy-test-copying"
-    os.environ["OUTPUT_BUCKET"] = "infralight-tests"
-
-    lambda_handler({}, None)

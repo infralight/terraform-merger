@@ -31,7 +31,8 @@ You can control terraform-merger with these parameters:
 | INPUT_BUCKET | Existing S3 Bucket containing sensitive terraform files | Mandatory |
 | OUTPUT_BUCKET | S3 Bucket you wish Terraform-merger to write the new merged state file | Mandatory |
 | TERRAFORM_STATE_SUFFIX | Defines terraform state files sufix<br />Default value is .tfstate | Optional |
-
+| OUTPUT_DELIMITER | Defines the output delimiter in Output S3 Bucket | Optional |
+| HARD_REFRESH | merging all .tfstate files (even if if they already merged)<br />Default value is false | Optional |
 
 ## Supported Terraform Versions
 - 0.11.X

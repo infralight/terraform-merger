@@ -21,11 +21,12 @@ def lambda_handler(event, context):
     OUTPUT_BUCKET = get_env_or_default("OUTPUT_BUCKET", None)
     TERRAFORM_STATE_FILE_SUFFIX = get_env_or_default("TERRAFORM_STATE_SUFFIX", ".tfstate")
     INFRALIGHT_OUTPUT_STATE_PATH = get_env_or_default("INFRALIGHT_STATE_PATH", "merger.infl")
-    HARD_REFRESH =  get_env_or_default("HARD_REFRESH", False)
+    HARD_REFRESH = get_env_or_default("HARD_REFRESH", False)
     OUTPUT_DELIMITER = get_env_or_default("OUTPUT_DELIMITER", "output")
+    EXCLUDED_ROOT_PATHS = get_env_or_default("EXCLUDED_ROOT_PREFIXES", None)
 
     ''' .tfstate files in S3 Bucket '''
-    input_keys = s3_client.get_all_s3_keys(INPUT_BUCKET, TERRAFORM_STATE_FILE_SUFFIX)
+    input_keys = s3_client.get_s3_keys_by_paths(INPUT_BUCKET, EXCLUDED_ROOT_PATHS, TERRAFORM_STATE_FILE_SUFFIX)
 
     ''' InfraLight merger latest state '''
     current_state_input_keys = s3_client.get_json_object_or_default(OUTPUT_BUCKET, INFRALIGHT_OUTPUT_STATE_PATH, [])

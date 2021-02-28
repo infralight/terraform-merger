@@ -4,12 +4,12 @@
 # Terraform Merger is an automatic solution for merging a couple of terraform state files into a single one
 
 In some terraform working methods, there is a usage in more than one state file. Terraform Merger was created to automatically merge an unlimited number of state files into one, and by that to allow TF users more capabilities.
-To create a valid merged state file, there are two requirements:
+without the following requirements applied, the merged state file created will not be fully functional (but can still be in use):
 1. All the merged state files must be of the same version and terraform version.
-2. Each resource identifier must have a unique name across all pf the state files
+2. Each terraform resource must have a unique identifier across all the state files.
 
 ### Deploy Terraform Merger to your AWS account
-![N|Solid](architecture.png)]<br />
+![N|Solid](architecture.png)<br />
 
 Terraform Merger is easy to use; in order to merge your state files you'll have to follow these steps:
 1.  Click
@@ -36,7 +36,6 @@ You can control terraform-merger with these parameters:
 | EXCLUDED_ROOT_PATHS | Root paths in your S3 Bucket you wish to ignore when getting the terraform files | Optional |
 
 ## Supported Terraform Versions
-- 0.11.X
 - 0.12.X
 - 0.13.X
 - 0.14.X

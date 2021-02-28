@@ -32,7 +32,7 @@ def lambda_handler(event, context):
     current_state_input_keys = s3_client.get_json_object_or_default(OUTPUT_BUCKET, INFRALIGHT_OUTPUT_STATE_PATH, [])
 
     ''' check if state files changed since last state '''
-    if bool(HARD_REFRESH):
+    if eval(HARD_REFRESH):
         diff_keys = current_state_input_keys
     else:
         diff_keys = [k for k in input_keys if k not in current_state_input_keys]

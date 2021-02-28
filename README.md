@@ -4,9 +4,6 @@
 # Terraform Merger is an automatic solution for merging a couple of terraform state files into a single one
 
 In some terraform working methods, there is a usage in more than one state file. Terraform Merger was created to automatically merge an unlimited number of state files into one, and by that to allow TF users more capabilities.
-without the following requirements applied, the merged state file created will not be fully functional (but can still be in use):
-1. All the merged state files must be of the same version and terraform version.
-2. Each terraform resource must have a unique identifier across all the state files.
 
 ### Deploy Terraform Merger to your AWS account
 ![N|Solid](architecture.png)<br />
@@ -32,7 +29,7 @@ You can control terraform-merger with these parameters:
 | OUTPUT_BUCKET | S3 Bucket you wish Terraform-merger to write the new merged state file | Mandatory |
 | TERRAFORM_STATE_SUFFIX | Defines terraform state files sufix<br />Default value is .tfstate | Optional |
 | OUTPUT_DELIMITER | Defines the output delimiter in Output S3 Bucket | Optional |
-| HARD_REFRESH | Merging all .tfstate files (even if if they already merged)<br />Default value is false | Optional |
+| HARD_REFRESH | Merging all .tfstate files (even if if they already merged)<br />Default value is False | Optional |
 | EXCLUDED_ROOT_PATHS | Root paths in your S3 Bucket you wish to ignore when getting the terraform files | Optional |
 
 ## Supported Terraform Versions
@@ -41,6 +38,10 @@ You can control terraform-merger with these parameters:
 - 0.14.X
 
 ## Merger is currently supported in N.Virginia (us-east-1)
+This tool is not compatiable for migration terragrunt state files to terraform. without the following requirements applied, the merged state file created will not be fully functional (but can still be in some uses):
+1. All the merged state files must be of the same version and terraform version.
+2. Each terraform resource must have a unique identifier across all the state files.
+
 
 License
 ----

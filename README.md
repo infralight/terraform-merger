@@ -3,12 +3,12 @@
 
 # Terraform Merger is an automatic solution for merging a couple of terraform state files into a single one
 
-In some terraform working methods, there is a usage in more than one state file. Terraform Merger was created to automatically merge an unlimited number of state files into one, and by that to allow TF users more capabilities.
+In some terraform working methods, there is usage in more than one state file. Terraform Merger was created to automatically merge an unlimited number of state files into one, and by that to allow TF users more capabilities.
 
 ### Deploy Terraform Merger to your AWS account
 ![N|Solid](architecture.png)<br />
 
-Terraform Merger is easy to use; in order to merge your state files you'll have to follow these steps:
+Terraform Merger is easy to use; in order to merge your state files follow these steps:
 1.  Click
     [<img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png">](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=infralight-terraform-merger&templateURL=https://infralight-templates-public.s3.amazonaws.com/merger/template.yml).
 2.  In **Select Template**, click **Next** (no need to make a
@@ -37,9 +37,9 @@ You can control terraform-merger with these parameters:
 - 0.13.X
 - 0.14.X
 
-## Merger is currently supported in N.Virginia (us-east-1)
-This tool is not compatiable for migration terragrunt state files to terraform. without the following requirements applied, the merged state file created will not be fully functional (but can still be in some uses):
-1. All the merged state files must be of the same version and terraform version.
+## Terraform Merger is currently supported in N.Virginia (us-east-1)
+This tool is not compatiable for fully migrating terragrunt state files to terraform single state file. Without the following requirements applied, the merged state file will not be fully functional (but can still be in some uses):
+1. All of the state files must be of the same version and terraform version.
 2. Each terraform resource must have a unique identifier across all the state files.
 
 
